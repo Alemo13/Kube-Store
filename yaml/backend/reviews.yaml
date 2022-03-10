@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reviews-deployment
+  namespace: backend-store
+  labels:
+    app: reviews
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reviews
+      tier: backend
+      track: stable
+  template:
+    metadata:
+      labels:
+        app: reviews
+        tier: backend
+        track: stable
+    spec:
+      containers:
+      - name: backend-reviews
+        image: chaphe/backend-reviews-image
+        ports:
+        - containerPort: 3000
+        env:
+        - name: USER_NAME
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: mongo-user
+        - name: USER_PWD
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: mongo-password 
+        - name: DB_URL
+          valueFrom:
+            configMapKeyRef:
+              name: mongo-config
+              key: mongo-url
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reviews-service
+  namespace: backend-store
+spec:
+  type: ExternalName
+  externalName: mongo-service.database.svc.cluster.local
+  selector:
+    app: reviews
+    tier: backend
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
