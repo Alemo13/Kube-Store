@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mysql-config
-  namespace: database
+  namespace: backends
 data:
   mysql-host: "mysql-library"
   mysql-port: "3306"

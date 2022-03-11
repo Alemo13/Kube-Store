@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: store-deployment
-  namespace: backend
+  namespace: backends
   labels:
     app: store
 spec:
@@ -16,8 +16,8 @@ spec:
         app: store
     spec:
       containers:
-      - name: backend-store
-        image: chaphe/backend-store-image
+      - name: backends
+        image: chaphe/backends-image:1.0
         ports:
         - containerPort: 8082
         env:
@@ -46,7 +46,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: store-service
-  namespace: backend
+  namespace: backends
 spec:
   type: ClusterIP
   selector:

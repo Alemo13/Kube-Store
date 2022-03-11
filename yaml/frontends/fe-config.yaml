@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: frontends
+data:
+  fe-host: "mysql-library"
+  fe-catalog-port: 8082
+  fe-reviews-port: 3000
+  fe-store-port: 8081

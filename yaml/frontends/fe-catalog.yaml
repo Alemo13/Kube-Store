@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-frontend
+  namespace: frontends
+  labels:
+    app: catalog-fe
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: catalog-fe
+  template:
+    metadata:
+      labels:
+        app: catalog-fe
+    spec:
+      containers:
+      - name: frontend-catalog
+        image: chaphe/frontend-catalog-image:1.0
+        ports:
+        - containerPort: 80
+        env:
+        - name: CATALOG_URL
+          valueFrom:
+            configMapKeyRef:
+              name: fe-config
+              key: fe-host
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalog-frontend
+  namespace: frontends
+spec:
+  type: LoadBalancer
+  selector:
+    app: catalog-fe
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

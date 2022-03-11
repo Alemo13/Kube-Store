@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: store-frontend
+  namespace: frontends
+  labels:
+    app: store-fe
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: store-fe
+  template:
+    metadata:
+      labels:
+        app: store-fe
+    spec:
+      containers:
+      - name: frontend-store
+        image: chaphe/frontend-store-image:1.0
+        ports:
+        - containerPort: 80
+        env:
+        - name: CATALOG_URL
+          valueFrom:
+            configMapKeyRef:
+              name: fe-config
+              key: fe-catalog-port
+        - name: STORE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: fe-config
+              key: fe-store-port
+        - name: REVIEWS_URL
+          valueFrom:
+            configMapKeyRef:
+              name: fe-config
+              key: fe-reviews-port
+        - name: STORE_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: fe-config
+              key: fe-host
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: store-frontend
+  namespace: frontends
+spec:
+  type: LoadBalancer
+  selector:
+    app: store-fe
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

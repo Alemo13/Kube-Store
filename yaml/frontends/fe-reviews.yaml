@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reviews-frontend
+  namespace: frontends
+  labels:
+    app: reviews-fe
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reviews-fe
+  template:
+    metadata:
+      labels:
+        app: reviews-fe
+    spec:
+      containers:
+      - name: frontend-reviews
+        image: chaphe/fronted-reviews-image:1.0
+        ports:
+        - containerPort: 80
+        env:
+        - name: REVIEWS_URL
+          valueFrom:
+            configMapKeyRef:
+              name: fe-config
+              key: fe-host
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reviews-frontend
+  namespace: frontends
+spec:
+  type: LoadBalancer
+  selector:
+    app: reviews-fe
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
